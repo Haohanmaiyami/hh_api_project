@@ -35,6 +35,7 @@ def get_employer_data(employer_id: int) -> dict:
     response.raise_for_status()
     return response.json()
 
+
 def get_company_vacancies(employer_id: int) -> list:
     """
     Получает список вакансий от работодателя с hh.ru по ID.

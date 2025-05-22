@@ -2,12 +2,16 @@ import json
 import os
 import sys
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
-
-
 from json_saver import JSONSaver
 from vacancy import Vacancy
+
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(BASE_DIR)
 
 
 def test_add_vacancy():

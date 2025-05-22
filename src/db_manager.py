@@ -1,5 +1,7 @@
-from psycopg2.extensions import connection
 from typing import List, Tuple
+
+from psycopg2.extensions import connection
+
 
 class DBManager:
     def __init__(self, conn: connection):
@@ -13,12 +15,14 @@ class DBManager:
         Возвращает список всех компаний и количество вакансий у каждой.
         """
         with self.conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT e.name, COUNT(v.vacancy_id)
                 FROM employers e
                 LEFT JOIN vacancies v ON e.employer_id = v.employer_id
                 GROUP BY e.name;
-            """)
+            """
+            )
             return cur.fetchall()
 
     def get_all_vacancies(self) -> List[Tuple[str, str, int, int, str]]:
@@ -27,11 +31,13 @@ class DBManager:
         название компании, вакансия, зарплата от, до, ссылка.
         """
         with self.conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT e.name, v.name, v.salary_from, v.salary_to, v.url
                 FROM vacancies v
                 JOIN employers e ON v.employer_id = e.employer_id;
-            """)
+            """
+            )
             return cur.fetchall()
 
     def get_avg_salary(self) -> float:
@@ -39,7 +45,11 @@ class DBManager:
         Возвращает среднюю зарплату по всем вакансиям.
         """
         with self.conn.cursor() as cur:
-            cur.execute("SELECT AVG(salary_from) FROM vacancies WHERE salary_from IS NOT NULL;")
+            cur.execute(
+                "SELECT AVG(salary_from) "
+                "FROM vacancies "
+                "WHERE salary_from IS NOT NULL;"
+            )
             result = cur.fetchone()[0]
             return result if result else 0
 
@@ -49,20 +59,27 @@ class DBManager:
         """
         avg = self.get_avg_salary()
         with self.conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT name, salary_from
                 FROM vacancies
                 WHERE salary_from > %s;
-            """, (avg,))
+            """,
+                (avg,),
+            )
             return cur.fetchall()
 
     def get_vacancies_with_keyword(self, keyword: str) -> List[str]:
         """
-        Возвращает список названий вакансий, в которых встречается переданное слово.
+        Возвращает список названий вакансий, в которых
+        встречается переданное слово.
         """
         with self.conn.cursor() as cur:
-            cur.execute("""
+            cur.execute(
+                """
                 SELECT name FROM vacancies
                 WHERE name ILIKE %s;
-            """, (f"%{keyword}%",))
+            """,
+                (f"%{keyword}%",),
+            )
             return [row[0] for row in cur.fetchall()]
