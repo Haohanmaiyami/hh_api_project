@@ -2,7 +2,7 @@ import json
 from abc import ABC, abstractmethod
 from typing import List
 
-from src.vacancy import Vacancy
+from vacancy import Vacancy
 
 
 # Абстрактный класс для сохранения данных

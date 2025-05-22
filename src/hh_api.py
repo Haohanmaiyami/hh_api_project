@@ -24,3 +24,24 @@ class HeadHunterAPI(JobAPI):
                 f"Ошибка подключения к API: {response.status_code}"
             )
         return response.json().get("items", [])
+
+
+def get_employer_data(employer_id: int) -> dict:
+    """
+    Получает данные о работодателе с hh.ru по ID.
+    """
+    url = f"https://api.hh.ru/employers/{employer_id}"
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+
+
+def get_company_vacancies(employer_id: int) -> list:
+    """
+    Получает список вакансий от работодателя с hh.ru по ID.
+    """
+    url = "https://api.hh.ru/vacancies"
+    params = {"employer_id": employer_id, "per_page": 100}
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    return response.json().get("items", [])
